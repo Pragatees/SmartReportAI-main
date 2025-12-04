@@ -11,6 +11,15 @@ from sentence_transformers import SentenceTransformer
 from models import VectorStoreInput, QueryInput
 from typing import Dict, Any, List
 
+from pathlib import Path
+from dotenv import load_dotenv
+import os
+
+BASE_DIR = Path(__file__).resolve().parent
+load_dotenv(BASE_DIR / ".env")
+
+
+
 logger = logging.getLogger(__name__)
 
 router = APIRouter(tags=["Vector Database"])  # Removed prefix="/vector-db"
@@ -27,7 +36,12 @@ FAISS_INDEX_PATH = os.path.join(DATA_DIR, "faiss_index.bin")
 os.makedirs(DATA_DIR, exist_ok=True)
 
 # Replace with your actual Perplexity API key
-PERPLEXITY_API_KEY = "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"
+PERPLEXITY_API_KEY = os.getenv("PERPLEXITY_API_KEY")
+
+if not PERPLEXITY_API_KEY:
+    logger.error("PERPLEXITY_API_KEY is missing. Check backend/.env")
+    raise RuntimeError("PERPLEXITY_API_KEY not found in environment")
+y 
 HEADERS = {
     "Authorization": f"Bearer {PERPLEXITY_API_KEY}",
     "Content-Type": "application/json"

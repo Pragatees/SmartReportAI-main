@@ -7,12 +7,24 @@ import requests
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
+from pathlib import Path
+from dotenv import load_dotenv
+import os
+
+BASE_DIR = Path(__file__).resolve().parent
+load_dotenv(BASE_DIR / ".env")
+
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/specify-goal", tags=["Goal Specification"])
 
 # Your actual Perplexity API key
-PERPLEXITY_API_KEY = "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"
+PERPLEXITY_API_KEY = os.getenv("PERPLEXITY_API_KEY")
+
+if not PERPLEXITY_API_KEY:
+    logger.error("PERPLEXITY_API_KEY is missing. Check backend/.env")
+    raise RuntimeError("PERPLEXITY_API_KEY not found in environment")
+
 HEADERS = {
     "Authorization": f"Bearer {PERPLEXITY_API_KEY}",
     "Content-Type": "application/json"
