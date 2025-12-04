@@ -13,7 +13,7 @@ HEADERS = {
     "Authorization": f"Bearer {PERPLEXITY_API_KEY}",
     "Content-Type": "application/json"
 }
-PERPLEXITY_API_URL = "https://api.perplexity.ai/chat/completions"
+# PERPLEXITY_API_URL = "https://api.perplexity.ai/chat/completions"
 
 @router.post("/")
 async def generate_insights(input: InsightInput):
