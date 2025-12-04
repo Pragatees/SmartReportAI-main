@@ -41,7 +41,6 @@ PERPLEXITY_API_KEY = os.getenv("PERPLEXITY_API_KEY")
 if not PERPLEXITY_API_KEY:
     logger.error("PERPLEXITY_API_KEY is missing. Check backend/.env")
     raise RuntimeError("PERPLEXITY_API_KEY not found in environment")
-y 
 HEADERS = {
     "Authorization": f"Bearer {PERPLEXITY_API_KEY}",
     "Content-Type": "application/json"
