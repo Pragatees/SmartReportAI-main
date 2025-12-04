@@ -23,7 +23,7 @@ async def generate_insights(input: InsightInput):
 
     prompt = f"""
 You are a highly skilled and domain-aware AI Insight Agent. Analyze the document below based on its **domain** and **full content**. Your goal is to extract deep, meaningful insights, present a domain-aware summary, and highlight potential **risk factors** based on the document content and its context.
-
+if it is a legal document shoows the risk factors
 Respond ONLY with a valid JSON object in the following exact format:
 
 {{

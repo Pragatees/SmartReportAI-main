@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Sidebar from "./sidebar"; // Assuming Sidebar is in a separate file
+import Sidebar from "./sidebar";
 import {
   FaInfoCircle,
   FaChevronDown,
@@ -28,39 +27,73 @@ const insightVariants = {
 
 export default function InsightAgentWithSidebar() {
   // Theme and Sidebar State
-  const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "light");
+  const [theme, setTheme] = useState(() => {
+    try {
+      return localStorage.getItem("theme") || "light";
+    } catch {
+      return "light";
+    }
+  });
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   // Content/Data State
-  const [domain, setDomain] = useState(() => localStorage.getItem("pdfDomain") || "");
-  const [content, setContent] = useState(() => localStorage.getItem("pdfText") || "");
+  const [domain, setDomain] = useState(() => {
+    try {
+      return localStorage.getItem("pdfDomain") || "";
+    } catch {
+      return "";
+    }
+  });
+  const [content, setContent] = useState(() => {
+    try {
+      return localStorage.getItem("pdfText") || "";
+    } catch {
+      return "";
+    }
+  });
   const [summary, setSummary] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [expanded, setExpanded] = useState({});
   const [insights, setInsights] = useState(() => {
-    const stored = localStorage.getItem("insights");
-    return stored ? JSON.parse(stored) : [];
+    try {
+      const stored = localStorage.getItem("insights");
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
   });
 
   // Theme Persistence
   useEffect(() => {
     document.documentElement.className = theme;
-    localStorage.setItem("theme", theme);
+    try {
+      localStorage.setItem("theme", theme);
+    } catch (e) {
+      console.warn("Could not save theme:", e);
+    }
   }, [theme]);
 
   // Persist Domain and Content
   useEffect(() => {
-    localStorage.setItem("pdfDomain", domain);
-    localStorage.setItem("pdfText", content);
+    try {
+      localStorage.setItem("pdfDomain", domain);
+      localStorage.setItem("pdfText", content);
+    } catch (e) {
+      console.warn("Could not save data:", e);
+    }
   }, [domain, content]);
 
   // Persist Insights
   useEffect(() => {
-    if (Array.isArray(insights) && insights.length > 0) {
-      localStorage.setItem("insights", JSON.stringify(insights));
-    } else {
-      localStorage.removeItem("insights");
+    try {
+      if (Array.isArray(insights) && insights.length > 0) {
+        localStorage.setItem("insights", JSON.stringify(insights));
+      } else {
+        localStorage.removeItem("insights");
+      }
+    } catch (e) {
+      console.warn("Could not save insights:", e);
     }
   }, [insights]);
 
@@ -73,10 +106,10 @@ export default function InsightAgentWithSidebar() {
     setLoading(true);
     setError("");
     try {
-      const themeValue = localStorage.getItem("theme"); // Preserve theme
-      localStorage.clear(); // Clear all localStorage
+      const themeValue = localStorage.getItem("theme");
+      localStorage.clear();
       if (themeValue) {
-        localStorage.setItem("theme", themeValue); // Restore theme
+        localStorage.setItem("theme", themeValue);
       }
       setDomain("");
       setContent("");
@@ -103,6 +136,14 @@ export default function InsightAgentWithSidebar() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Check if insight is a risk factor
+  const isRiskFactor = (insight) => {
+    const title = insight.title?.toLowerCase() || "";
+    const description = insight.description?.toLowerCase() || "";
+    const riskKeywords = ["risk", "threat", "danger", "vulnerability", "concern", "challenge", "issue", "problem", "warning"];
+    return riskKeywords.some(keyword => title.includes(keyword) || description.includes(keyword));
   };
 
   // Fetch Insights and Summary
@@ -166,6 +207,13 @@ export default function InsightAgentWithSidebar() {
           .insight-card:hover {
             transform: translateY(-4px);
             box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+          }
+          .risk-card {
+            border-left: 4px solid #ef4444;
+            background: rgba(239, 68, 68, 0.05);
+          }
+          .risk-title {
+            color: #dc2626;
           }
         `}
       </style>
@@ -313,30 +361,31 @@ export default function InsightAgentWithSidebar() {
 
           {/* Results */}
           <AnimatePresence>
-            <div>
-              {insights.length > 0 ? (
-                <motion.div
-                  className={`p-6 rounded-lg mb-8 ${
-                    theme === "light" ? "bg-orange-50/70 border-orange-100" : "bg-gray-800/70 border-gray-700"
-                  } border backdrop-blur-sm shadow-lg`}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
+            {insights.length > 0 ? (
+              <motion.div
+                className={`p-6 rounded-lg mb-8 ${
+                  theme === "light" ? "bg-orange-50/70 border-orange-100" : "bg-gray-800/70 border-gray-700"
+                } border backdrop-blur-sm shadow-lg`}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+              >
+                <h2
+                  className={`text-2xl font-poppins font-bold mb-6 ${
+                    theme === "light" ? "text-gray-800" : "text-gray-200"
+                  }`}
                 >
-                  <h2
-                    className={`text-2xl font-poppins font-bold mb-6 ${
-                      theme === "light" ? "text-gray-800" : "text-gray-200"
-                    }`}
-                  >
-                    Document Insights
-                  </h2>
-                  <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-                    {insights.map((insight, i) => (
+                  Document Insights
+                </h2>
+                <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                  {insights.map((insight, i) => {
+                    const isRisk = isRiskFactor(insight);
+                    return (
                       <motion.div
                         key={i}
                         className={`insight-card p-6 rounded-lg ${
                           theme === "light" ? "bg-white border-orange-200" : "bg-gray-900 border-gray-600"
-                        } border shadow-md`}
+                        } border shadow-md ${isRisk ? "risk-card" : ""}`}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.1, type: "spring", stiffness: 100 }}
@@ -347,15 +396,15 @@ export default function InsightAgentWithSidebar() {
                         >
                           <h3
                             className={`text-lg font-semibold ${
-                              theme === "light" ? "text-gray-800" : "text-gray-200"
+                              isRisk ? "risk-title" : theme === "light" ? "text-gray-800" : "text-gray-200"
                             }`}
                           >
                             {insight.title}
                           </h3>
                           {expanded[i] ? (
-                            <FaChevronUp className={theme === "light" ? "text-orange-500" : "text-emerald-400"} />
+                            <FaChevronUp className={isRisk ? "text-red-600" : theme === "light" ? "text-orange-500" : "text-emerald-400"} />
                           ) : (
-                            <FaChevronDown className={theme === "light" ? "text-orange-500" : "text-emerald-400"} />
+                            <FaChevronDown className={isRisk ? "text-red-600" : theme === "light" ? "text-orange-500" : "text-emerald-400"} />
                           )}
                         </div>
                         <AnimatePresence>
@@ -368,7 +417,7 @@ export default function InsightAgentWithSidebar() {
                             >
                               <p
                                 className={`text-sm font-medium mt-4 ${
-                                  theme === "light" ? "text-gray-700" : "text-gray-300"
+                                  isRisk ? "text-red-700" : theme === "light" ? "text-gray-700" : "text-gray-300"
                                 }`}
                               >
                                 {insight.description}
@@ -378,7 +427,7 @@ export default function InsightAgentWithSidebar() {
                                   {insight.supporting_data.map((item, k) => (
                                     <li
                                       key={k}
-                                      className={theme === "light" ? "text-gray-600" : "text-gray-400"}
+                                      className={isRisk ? "text-red-600" : theme === "light" ? "text-gray-600" : "text-gray-400"}
                                     >
                                       {item}
                                     </li>
@@ -389,33 +438,33 @@ export default function InsightAgentWithSidebar() {
                           )}
                         </AnimatePresence>
                       </motion.div>
-                    ))}
-                  </div>
-                  {summary && (
-                    <motion.p
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className={`mt-8 text-sm font-semibold ${
-                        theme === "light" ? "text-gray-700" : "text-gray-300"
-                      }`}
-                    >
-                      <strong>Summary:</strong> {summary}
-                    </motion.p>
-                  )}
-                </motion.div>
-              ) : (
-                <motion.p
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
-                  className={`text-sm mb-8 text-center font-semibold ${
-                    theme === "light" ? "text-gray-600" : "text-gray-400"
-                  }`}
-                >
-                  No insights available. Click "Generate Insights" to generate insights.
-                </motion.p>
-              )}
-            </div>
+                    );
+                  })}
+                </div>
+                {summary && (
+                  <motion.p
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className={`mt-8 text-sm font-semibold ${
+                      theme === "light" ? "text-gray-700" : "text-gray-300"
+                    }`}
+                  >
+                    <strong>Summary:</strong> {summary}
+                  </motion.p>
+                )}
+              </motion.div>
+            ) : (
+              <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                className={`text-sm mb-8 text-center font-semibold ${
+                  theme === "light" ? "text-gray-600" : "text-gray-400"
+                }`}
+              >
+                No insights available. Click "Generate Insights" to generate insights.
+              </motion.p>
+            )}
           </AnimatePresence>
 
           {/* Footer */}
