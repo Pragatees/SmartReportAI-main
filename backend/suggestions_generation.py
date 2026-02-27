@@ -1,12 +1,16 @@
 import json
 import logging
-import requests
 from fastapi import APIRouter, HTTPException
 from models import SuggestionInput
 
 from pathlib import Path
 from dotenv import load_dotenv
 import os
+import google.generativeai as genai
+
+# ==============================
+# LOAD ENV
+# ==============================
 
 BASE_DIR = Path(__file__).resolve().parent
 load_dotenv(BASE_DIR / ".env")
@@ -15,91 +19,128 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/generate-suggestions", tags=["Suggestions Generation"])
 
-PERPLEXITY_API_KEY = os.getenv("PERPLEXITY_API_KEY")
+# ==============================
+# GEMINI CONFIG
+# ==============================
 
-if not PERPLEXITY_API_KEY:
-    logger.error("PERPLEXITY_API_KEY is missing. Check backend/.env")
-    raise RuntimeError("PERPLEXITY_API_KEY not found in environment")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
-HEADERS = {
-    "Authorization": f"Bearer {PERPLEXITY_API_KEY}",
-    "Content-Type": "application/json"
-}
-PERPLEXITY_API_URL = "https://api.perplexity.ai/chat/completions"
+if not GEMINI_API_KEY:
+    logger.error("GEMINI_API_KEY missing in backend/.env")
+    raise RuntimeError("GEMINI_API_KEY not found")
+
+genai.configure(api_key=GEMINI_API_KEY)
+
+model = genai.GenerativeModel("gemini-2.5-flash")
+
+
+# ==============================
+# GEMINI CALL FUNCTION
+# ==============================
+
+def call_gemini(prompt: str):
+    try:
+        chat = model.start_chat(history=[])
+        response = chat.send_message(prompt)
+
+        if not response or not response.text:
+            raise HTTPException(status_code=500, detail="Empty response from Gemini")
+
+        raw_text = response.text.strip()
+
+        # Try direct parsing
+        try:
+            return json.loads(raw_text)
+        except json.JSONDecodeError:
+            # Extract JSON array safely
+            start = raw_text.find("[")
+            end = raw_text.rfind("]") + 1
+
+            if start == -1 or end == -1:
+                raise HTTPException(
+                    status_code=500,
+                    detail="Gemini did not return valid JSON array"
+                )
+
+            cleaned_json = raw_text[start:end]
+            return json.loads(cleaned_json)
+
+    except json.JSONDecodeError as je:
+        logger.error(f"Invalid JSON returned: {raw_text}")
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "message": "Model returned invalid JSON format",
+                "original_response": raw_text,
+                "error": str(je)
+            }
+        )
+
+    except Exception as e:
+        logger.error(f"Gemini API error: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to generate suggestions: {str(e)}"
+        )
+
+
+# ==============================
+# MAIN ENDPOINT
+# ==============================
 
 @router.post("/")
 async def generate_suggestions(input: SuggestionInput):
+
     if not input.insights or not isinstance(input.insights, list):
-        logger.warning("Invalid or empty insights received for suggestions")
-        raise HTTPException(status_code=400, detail="Insights must be a non-empty list")
+        logger.warning("Invalid or empty insights received")
+        raise HTTPException(
+            status_code=400,
+            detail="Insights must be a non-empty list"
+        )
 
     insights_json = json.dumps(input.insights, indent=2)
 
     prompt = f"""
-You are a professional AI Suggestion Agent. Based on each of the following **detailed insights**, generate **1 clear, focused, and actionable suggestion** to help the user overcome the issues or challenges mentioned in that specific insight.
+You are a professional AI Suggestion Agent.
 
-⚠️ Important Instructions:
-- You must return the same number of suggestions as insights (1-to-1 mapping).
-- Each suggestion must directly resolve or improve the situation described in that insight.
-- Focus on optimization, resolution, mitigation, or actionable next steps.
-- Avoid vague or generic suggestions.
-- Each suggestion must be written in plain, instructive language.
-- If risk factors are mentioned, prioritize mitigating them.
+Based on each of the following detailed insights, generate EXACTLY ONE clear,
+focused, and actionable suggestion per insight.
 
-✅ Strict Output Format:
-Return a **JSON array of strings**, with each element corresponding to the insight at the same index.
+STRICT RULES:
+- Return the SAME number of suggestions as insights (1-to-1 mapping).
+- Each suggestion must directly resolve or mitigate the issue.
+- Avoid generic advice.
+- If risk_factors exist, prioritize mitigating them.
+- Return ONLY a valid JSON array of strings.
+- No explanations. No markdown.
+
+Required format:
 
 [
   "Suggestion for Insight 1",
-  "Suggestion for Insight 2",
-  ...
+  "Suggestion for Insight 2"
 ]
 
 Input Insights:
 {insights_json}
 """
 
-    payload = {
-        "model": "sonar-pro",
-        "messages": [
-            {"role": "user", "content": prompt}
-        ]
-    }
+    suggestions = call_gemini(prompt)
 
-    try:
-        response = requests.post(PERPLEXITY_API_URL, headers=HEADERS, json=payload)
-        if response.status_code != 200:
-            raise HTTPException(
-                status_code=response.status_code,
-                detail=f"Perplexity API error: {response.text}"
-            )
+    # ==============================
+    # VALIDATION
+    # ==============================
 
-        response_json = response.json()
-        logger.debug(f"Perplexity API response for suggestions: {response_json}")
+    if not isinstance(suggestions, list):
+        raise HTTPException(
+            status_code=500,
+            detail="Response must be a JSON array"
+        )
 
-        message_content = response_json.get("choices", [{}])[0].get("message", {}).get("content", "")
-        if not message_content:
-            raise HTTPException(status_code=500, detail="Empty response from Perplexity API")
+    if len(suggestions) != len(input.insights):
+        raise HTTPException(
+            status_code=500,
+            detail="Mismatch in number of suggestions and insights"
+        )
 
-        json_start = message_content.find('[')
-        json_end = message_content.rfind(']') + 1
-        suggestions_json = message_content[json_start:json_end]
-
-        suggestions = json.loads(suggestions_json)
-        if not isinstance(suggestions, list) or len(suggestions) != len(input.insights):
-            raise HTTPException(status_code=500, detail="Mismatch in number of suggestions and insights")
-
-        return {"suggestions": suggestions}
-
-    except json.JSONDecodeError as je:
-        logger.error(f"Invalid JSON response for suggestions: {message_content}")
-        logger.error(f"JSON decode error: {str(je)}")
-        raise HTTPException(status_code=422, detail={
-            "message": "The model returned an invalid suggestions response format",
-            "original_response": message_content,
-            "error": str(je)
-        })
-
-    except Exception as e:
-        logger.error(f"Error generating suggestions: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Failed to generate suggestions: {str(e)}")
+    return {"suggestions": suggestions}

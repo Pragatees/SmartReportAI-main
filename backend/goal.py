@@ -3,161 +3,171 @@
 import json
 import logging
 import re
-import requests
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-
 from pathlib import Path
 from dotenv import load_dotenv
 import os
+import google.generativeai as genai
+
+# ==============================
+# LOAD ENV
+# ==============================
 
 BASE_DIR = Path(__file__).resolve().parent
 load_dotenv(BASE_DIR / ".env")
 
 logger = logging.getLogger(__name__)
-
 router = APIRouter(prefix="/specify-goal", tags=["Goal Specification"])
 
-# Your actual Perplexity API key
-PERPLEXITY_API_KEY = os.getenv("PERPLEXITY_API_KEY")
+# ==============================
+# GEMINI CONFIG
+# ==============================
 
-if not PERPLEXITY_API_KEY:
-    logger.error("PERPLEXITY_API_KEY is missing. Check backend/.env")
-    raise RuntimeError("PERPLEXITY_API_KEY not found in environment")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
-HEADERS = {
-    "Authorization": f"Bearer {PERPLEXITY_API_KEY}",
-    "Content-Type": "application/json"
-}
-PERPLEXITY_API_URL = "https://api.perplexity.ai/chat/completions"
+if not GEMINI_API_KEY:
+    logger.error("GEMINI_API_KEY is missing. Check backend/.env")
+    raise RuntimeError("GEMINI_API_KEY not found in environment")
 
+genai.configure(api_key=GEMINI_API_KEY)
+model = genai.GenerativeModel("gemini-2.5-flash")
+
+# ==============================
+# INPUT MODEL
+# ==============================
 
 class GoalInput(BaseModel):
     goal: str
     pdf_content: str
 
 
+# ==============================
+# CLEAN JSON RESPONSE
+# ==============================
+
 def clean_json_response(content: str) -> str:
-    """
-    Extract clean JSON from Perplexity's sonar-pro response.
-    Handles markdown code blocks, <think> tags, extra text, etc.
-    """
     if not content:
         return "{}"
 
     text = content.strip()
 
-    # Remove <think>...</think> reasoning blocks (common in sonar-pro)
-    text = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL | re.IGNORECASE)
-
-    # Remove markdown code fences: ```json ... ``` or just ```
+    # Remove markdown blocks
     text = re.sub(r"^```[a-z]*\n|```$", "", text, flags=re.MULTILINE)
 
-    # Remove any leading/trailing text before first { and after last }
-    text = re.sub(r"^.*?(\{.*\}$)", r"\1", text, flags=re.DOTALL)
-    text = re.sub(r"(^\{.*?\}).*$", r"\1", text, flags=re.DOTALL)
-
-    # Final brace extraction fallback
+    # Remove accidental extra text
     start = text.find("{")
     end = text.rfind("}") + 1
+
     if start >= 0 and end > start:
         text = text[start:end]
 
     return text.strip()
 
 
+# ==============================
+# GEMINI CALL
+# ==============================
+
+def call_gemini(system_prompt: str, user_prompt: str) -> dict:
+    try:
+        full_prompt = f"""
+SYSTEM:
+{system_prompt}
+
+USER:
+{user_prompt}
+
+IMPORTANT:
+Return ONLY valid JSON.
+"""
+
+        chat = model.start_chat(history=[])
+        response = chat.send_message(
+            full_prompt,
+            generation_config={
+                "temperature": 0.1,
+                "max_output_tokens": 500,
+            }
+        )
+
+        if not response or not response.text:
+            raise HTTPException(status_code=500, detail="Empty response from Gemini")
+
+        cleaned = clean_json_response(response.text)
+
+        try:
+            return json.loads(cleaned)
+        except json.JSONDecodeError:
+            logger.error(f"Invalid JSON from Gemini:\n{response.text}")
+            raise HTTPException(status_code=500, detail="AI returned invalid JSON format")
+
+    except Exception as e:
+        logger.error(f"Gemini API error: {e}", exc_info=True)
+        raise HTTPException(status_code=502, detail="Gemini request failed")
+
+
+# ==============================
+# ENDPOINT
+# ==============================
+
 @router.post("/")
 async def specify_goal(input: GoalInput):
+
     if not input.goal.strip():
-        logger.warning("Empty goal received")
         raise HTTPException(status_code=400, detail="Goal input cannot be empty")
+
     if not input.pdf_content.strip():
-        logger.warning("Empty PDF content received")
         raise HTTPException(status_code=400, detail="PDF content cannot be empty")
 
-    # Strongly enforce pure JSON output
     system_prompt = """
-You are an expert goal specification assistant. Analyze the user's goal and document content.
+You are an expert goal specification assistant.
 
-IMPORTANT RULES:
+STRICT RULES:
 - Respond with ONLY a valid JSON object.
-- NO markdown, NO code blocks, NO ```json, NO explanations, NO extra text.
-- NO <think> tags.
-- Output must be parseable by json.loads() directly.
+- NO markdown
+- NO code blocks
+- NO explanations
+- Output must be directly parseable with json.loads()
 
 Return exactly this format:
+
 {
   "procedure": "1-2 sentence high-level plan",
   "approach": "2-3 sentence strategic approach",
-  "steps": ["step 1", "step 2", "step 3", "step 4", "step 5"]
+  "steps": ["step 1", "step 2", "step 3", "step 4"]
 }
 
-If the goal is unrelated to the document content, respond with:
+If the goal is unrelated to the document content:
 {"error": "Goal does not match document domain"}
 """
 
     user_prompt = f"""
-User Goal: {input.goal}
+User Goal:
+{input.goal}
 
 Document Content (first 10000 chars):
 {input.pdf_content[:10000]}
 """
 
-    payload = {
-        "model": "sonar-pro",
-        "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt}
-        ],
-        "temperature": 0.1,
-        "max_tokens": 500
-    }
+    result = call_gemini(system_prompt, user_prompt)
 
-    try:
-        response = requests.post(PERPLEXITY_API_URL, headers=HEADERS, json=payload, timeout=40)
-        
-        if response.status_code != 200:
-            error_detail = response.text[:500]
-            logger.error(f"Perplexity API error {response.status_code}: {error_detail}")
-            raise HTTPException(status_code=502, detail=f"Perplexity API error: {response.status_code}")
+    # ==============================
+    # VALIDATION
+    # ==============================
 
-        data = response.json()
-        logger.debug(f"Raw Perplexity response: {data}")
+    if "error" in result:
+        return {"error": "Goal does not match document domain"}
 
-        content = data.get("choices", [{}])[0].get("message", {}).get("content", "").strip()
-        if not content:
-            raise HTTPException(status_code=500, detail="Empty response from AI model")
+    required_keys = ["procedure", "approach", "steps"]
 
-        # Clean and parse JSON safely
-        cleaned = clean_json_response(content)
-        logger.debug(f"Cleaned JSON string: {cleaned}")
+    if not all(key in result for key in required_keys):
+        logger.error(f"Invalid structure from Gemini: {result}")
+        raise HTTPException(status_code=500, detail="Invalid response structure from AI")
 
-        try:
-            result = json.loads(cleaned)
-        except json.JSONDecodeError as e:
-            logger.error(f"Failed to parse JSON after cleaning:\nRaw: {content}\nCleaned: {cleaned}\nError: {e}")
-            raise HTTPException(status_code=500, detail="AI returned invalid JSON format")
+    if not isinstance(result["steps"], list) or not (3 <= len(result["steps"]) <= 5):
+        raise HTTPException(status_code=500, detail="Steps must be a list of 3-5 items")
 
-        # Handle domain mismatch case
-        if "error" in result and "domain" in result.get("error", "").lower():
-            return {"error": "Goal does not match document domain"}
+    logger.info("Goal specification successful via Gemini")
 
-        # Validate required structure
-        required = ["procedure", "approach", "steps"]
-        if not all(k in result for k in required):
-            logger.error(f"Missing keys in AI response: {result}")
-            raise HTTPException(status_code=500, detail="Invalid response structure from AI")
-
-        if not isinstance(result["steps"], list) or not (3 <= len(result["steps"]) <= 5):
-            logger.error(f"Invalid steps format: {result['steps']}")
-            raise HTTPException(status_code=500, detail="Steps must be a list of 3-5 items")
-
-        logger.info("Goal specification successful")
-        return result
-
-    except requests.exceptions.RequestException as e:
-        logger.error(f"Request failed: {e}")
-        raise HTTPException(status_code=502, detail="Failed to connect to AI service")
-    except Exception as e:
-        logger.error(f"Unexpected error: {e}", exc_info=True)
-        raise HTTPException(status_code=500, detail="Internal server error")
+    return result
