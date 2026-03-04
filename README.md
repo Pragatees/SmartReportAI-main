@@ -1,36 +1,45 @@
 <div align="center">
 
-<!-- Animated Banner -->
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:6366f1,100:8b5cf6&height=200&section=header&text=SmartReport%20AI&fontSize=60&fontColor=ffffff&animation=fadeIn&fontAlignY=38&desc=Transform%20Raw%20Data%20into%20Intelligent%20Reports%20Instantly&descAlignY=55&descSize=18" width="100%"/>
+<!-- Animated Cylinder Banner - different from waving/slice -->
+<img src="https://capsule-render.vercel.app/api?type=cylinder&color=0:0f0c29,50:302b63,100:24243e&height=220&section=header&text=SmartReport%20AI&fontSize=65&fontColor=ffffff&animation=blinking&fontAlignY=55&desc=⚡%20Raw%20Data%20In.%20Intelligent%20Reports%20Out.&descAlignY=75&descSize=16&stroke=8b5cf6&strokeWidth=2" width="100%"/>
 
 <br/>
-
-<!-- Animated Typing Effect -->
-<a href="https://git.io/typing-svg">
-  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=22&pause=1000&color=6366F1&center=true&vCenter=true&multiline=true&width=700&height=80&lines=🚀+AI-Powered+Report+Generation;⚡+Blazing+Fast+with+Groq+API;🧠+Context-Aware+with+LangChain" alt="Typing SVG" />
-</a>
 
 <br/><br/>
 
-<!-- Badges Row 1 -->
-[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com/)
-[![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org/)
-[![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
-
-<!-- Badges Row 2 -->
-[![LangChain](https://img.shields.io/badge/🦜_LangChain-1C3C3C?style=for-the-badge)](https://langchain.com/)
-[![Groq](https://img.shields.io/badge/⚡_Groq_API-F55036?style=for-the-badge)](https://groq.com/)
-[![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com/)
-[![Framer Motion](https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white)](https://framer.com/motion/)
+<!-- Animated snake contribution graph style separator -->
+<img src="https://raw.githubusercontent.com/platane/snk/output/github-contribution-grid-snake-dark.svg" width="100%" alt="snake animation"/>
 
 <br/>
 
-<!-- Stats Badges -->
+<!-- Pill-style badges - different from for-the-badge and flat-square -->
+![React](https://img.shields.io/badge/-React-61DAFB?style=social&logo=react)
+&nbsp;
+![FastAPI](https://img.shields.io/badge/-FastAPI-009688?style=social&logo=fastapi)
+&nbsp;
+![Python](https://img.shields.io/badge/-Python-3776AB?style=social&logo=python)
+&nbsp;
+![Vite](https://img.shields.io/badge/-Vite-646CFF?style=social&logo=vite)
+&nbsp;
+![LangChain](https://img.shields.io/badge/-LangChain-1C3C3C?style=social)
+&nbsp;
+![Groq](https://img.shields.io/badge/-Groq_API-F55036?style=social)
+
+<br/><br/>
+
+<!-- Metrics row -->
+<img src="https://img.shields.io/badge/⚡_Inference-Ultra_Fast-a78bfa?style=flat-square"/>
+<img src="https://img.shields.io/badge/🧠_Context-LangChain_Powered-7c3aed?style=flat-square"/>
+<img src="https://img.shields.io/badge/🌍_Domain-Agnostic-6d28d9?style=flat-square"/>
+<img src="https://img.shields.io/badge/📄_Reports-Auto_Generated-5b21b6?style=flat-square"/>
+
+<br/><br/>
+
 ![GitHub stars](https://img.shields.io/github/stars/yourusername/SmartReportAI?style=social)
+&nbsp;
 ![GitHub forks](https://img.shields.io/github/forks/yourusername/SmartReportAI?style=social)
-![GitHub issues](https://img.shields.io/github/issues/yourusername/SmartReportAI?color=6366f1)
-![License](https://img.shields.io/badge/license-MIT-brightgreen)
+&nbsp;
+![GitHub issues](https://img.shields.io/github/issues/yourusername/SmartReportAI?style=social)
 
 </div>
 
@@ -40,35 +49,43 @@
 
 ## 📌 Problem Statement
 
-> **Creating professional reports manually is time-consuming, repetitive, and draining.**
+<img align="right" width="280" src="https://media.giphy.com/media/qgQUggAC3Pfv687qPC/giphy.gif"/>
 
-Many professionals spend **hours** converting raw information into structured documents — time that could be better spent on actual decision-making. SmartReport AI is built to eliminate this bottleneck entirely.
+**Manually writing reports is a productivity killer.**
 
-<br/>
+Every day, professionals waste hours converting raw data into structured documents — formatting, restructuring, and rewriting content that an AI could handle in seconds.
+
+SmartReport AI replaces that entire workflow with a single prompt.
+
+- ❌ No more copy-pasting into templates
+- ❌ No more manual formatting
+- ✅ Just describe what you need — get a polished report instantly
+
+<br clear="right"/>
 
 ---
 
-## 💡 The Solution
+## 💡 How It Works
 
 <div align="center">
 
 ```
-📥 Input Raw Data or Prompt
-         │
-         ▼  ✨ AI Understands Context
-         │
-         ▼  🧠 LangChain Processing
-         │
-         ▼  ⚡ Groq LLM Inference
-         │
-         ▼  📄 Structured Report Generated
-         │
-         ▼  🖥️ Displayed on Modern UI
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃                                                ┃
+┃    📝  You type a prompt or paste raw data     ┃
+┃                      ↓                         ┃
+┃    🦜  LangChain understands the context       ┃
+┃                      ↓                         ┃
+┃    ⚡  Groq fires the LLM at lightning speed   ┃
+┃                      ↓                         ┃
+┃    📄  A structured report is born             ┃
+┃                      ↓                         ┃
+┃    🖥️  Rendered live in the React UI           ┃
+┃                                                ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 ```
 
 </div>
-
-SmartReport AI uses **AI-driven text generation and context understanding** to automate the entire reporting workflow — reducing manual effort while dramatically improving productivity.
 
 <br/>
 
@@ -76,50 +93,18 @@ SmartReport AI uses **AI-driven text generation and context understanding** to a
 
 ## 🧠 Key Features
 
-<table>
-<tr>
-<td width="50%">
+<div align="center">
 
-### ✨ AI-Powered Report Generation
-Generate structured, insightful reports **instantly** from any prompt or raw data input — no formatting expertise required.
+| | Feature | What It Means For You |
+|:---:|---|---|
+| ✨ | **AI Report Generation** | Go from raw input to polished report in seconds |
+| ⚡ | **Groq-Powered Speed** | LLM inference so fast it feels instantaneous |
+| 🧩 | **LangChain Context** | Multi-turn awareness for accurate, coherent reports |
+| 🎨 | **Animated React UI** | Framer Motion powered — smooth, modern, satisfying |
+| 🌍 | **Domain-Agnostic** | Works for business, research, healthcare, education & more |
+| 🔌 | **Modular Architecture** | Swap AI models or add new export formats with ease |
 
-</td>
-<td width="50%">
-
-### ⚡ High-Speed AI Inference
-Integrated with **Groq API** for blazing-fast LLM responses, so you're never waiting around.
-
-</td>
-</tr>
-<tr>
-<td width="50%">
-
-### 🧩 Context-Aware Intelligence
-Uses **LangChain** to maintain conversation context and improve accuracy across multi-turn report sessions.
-
-</td>
-<td width="50%">
-
-### 🎨 Modern Interactive UI
-Built with **React + Framer Motion** for silky-smooth animations and a delightful user experience.
-
-</td>
-</tr>
-<tr>
-<td width="50%">
-
-### 🌍 Domain-Independent
-Works across **Business, Research, Education, Healthcare, Finance**, and beyond. One tool, infinite use cases.
-
-</td>
-<td width="50%">
-
-### 🔌 Extensible Architecture
-Modular backend and frontend design makes it easy to plug in new AI models, export formats, or data sources.
-
-</td>
-</tr>
-</table>
+</div>
 
 <br/>
 
@@ -129,35 +114,24 @@ Modular backend and frontend design makes it easy to plug in new AI models, expo
 
 <div align="center">
 
-### 🖥️ Frontend
-
-| Technology | Purpose |
-|---|---|
-| ![React](https://img.shields.io/badge/React.js-20232A?style=flat-square&logo=react&logoColor=61DAFB) | Core UI Framework |
-| ![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white) | Lightning-fast Build Tool |
-| ![Framer Motion](https://img.shields.io/badge/Framer_Motion-0055FF?style=flat-square&logo=framer&logoColor=white) | Animations & Transitions |
-| ![React Icons](https://img.shields.io/badge/React_Icons-E91E63?style=flat-square&logo=react&logoColor=white) | Icon Library |
-
-### ⚙️ Backend
-
-| Technology | Purpose |
-|---|---|
-| ![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=flat-square&logo=fastapi) | High-Performance REST API |
-| ![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white) | Core Backend Language |
-
-### 🤖 AI / LLM Layer
-
-| Technology | Purpose |
-|---|---|
-| 🦜 **LangChain** | Context Management & Chaining |
-| ⚡ **Groq API** | Ultra-Fast LLM Inference |
-
-### 🚀 Deployment
-
-| Technology | Purpose |
-|---|---|
-| ![Vercel](https://img.shields.io/badge/Vercel-000?style=flat-square&logo=vercel&logoColor=white) | Frontend Hosting |
-| 🖥️ **FastAPI Server** | Backend Hosting |
+```mermaid
+mindmap
+  root((SmartReport AI))
+    Frontend
+      React.js
+      Vite
+      Framer Motion
+      React Icons
+    Backend
+      FastAPI
+      Python 3.10+
+    AI Layer
+      LangChain
+      Groq API
+    Deployment
+      Vercel
+      FastAPI Server
+```
 
 </div>
 
@@ -168,21 +142,21 @@ Modular backend and frontend design makes it easy to plug in new AI models, expo
 ## ⚙️ System Architecture
 
 ```mermaid
-flowchart TD
-    A[👤 User Interface - React] -->|API Request| B[🔌 Frontend API Calls]
-    B -->|HTTP POST| C[⚙️ FastAPI Backend]
-    C -->|Processes Input| D[🦜 LangChain Processing]
-    D -->|Sends Prompt| E[⚡ Groq LLM API]
-    E -->|AI Inference| F[🧠 Generated Report Content]
-    F -->|Response| C
-    C -->|JSON Response| A
+sequenceDiagram
+    actor User
+    participant UI as 🖥️ React UI
+    participant API as ⚙️ FastAPI
+    participant LC as 🦜 LangChain
+    participant GROQ as ⚡ Groq LLM
 
-    style A fill:#6366f1,color:#fff,stroke:#4f46e5
-    style B fill:#8b5cf6,color:#fff,stroke:#7c3aed
-    style C fill:#0ea5e9,color:#fff,stroke:#0284c7
-    style D fill:#10b981,color:#fff,stroke:#059669
-    style E fill:#f59e0b,color:#fff,stroke:#d97706
-    style F fill:#ef4444,color:#fff,stroke:#dc2626
+    User->>UI: Enters prompt or data
+    UI->>API: POST /generate-report
+    API->>LC: Passes input with context
+    LC->>GROQ: Sends structured prompt
+    GROQ-->>LC: Returns AI response
+    LC-->>API: Processed report content
+    API-->>UI: JSON response
+    UI-->>User: Renders formatted report ✅
 ```
 
 <br/>
@@ -191,27 +165,25 @@ flowchart TD
 
 ## 📂 Project Structure
 
-```
-📦 SmartReportAI
+```bash
+SmartReportAI/
 │
-├── 📁 backend
-│   ├── 🐍 main.py                 # FastAPI entry point
-│   ├── 📄 requirements.txt        # Python dependencies
-│   ├── 📁 services
-│   │   ├── 🤖 llm_service.py      # Groq + LangChain integration
-│   │   └── 📊 report_service.py   # Report structuring logic
-│   └── 📁 utils
-│       └── 🛠️ helpers.py          # Utility functions
+├── 🗂️  backend/
+│   ├── 🐍  main.py                  # FastAPI app entry point
+│   ├── 📋  requirements.txt         # Python dependencies
+│   ├── 🔧  services/
+│   │   ├── llm_service.py           # Groq + LangChain integration
+│   │   └── report_service.py        # Report structuring logic
+│   └── 🛠️  utils/
+│       └── helpers.py               # Shared utility functions
 │
-├── 📁 frontend
-│   ├── 📁 src
-│   │   ├── 📁 components          # Reusable UI components
-│   │   ├── 📁 pages               # Route-level page views
-│   │   └── 📁 assets              # Static files & styles
-│   ├── ⚡ vite.config.js          # Vite configuration
-│   └── 📦 package.json
+├── 🗂️  frontend/
+│   └── 📁  src/
+│       ├── components/              # Reusable UI components
+│       ├── pages/                   # Full page views
+│       └── assets/                  # Images, fonts, styles
 │
-└── 📖 README.md
+└── 📖  README.md
 ```
 
 <br/>
@@ -220,17 +192,11 @@ flowchart TD
 
 ## 🚀 Getting Started
 
-### Prerequisites
-
-Before you begin, ensure you have the following installed:
-
-- ![Node.js](https://img.shields.io/badge/Node.js-v18+-339933?style=flat-square&logo=nodedotjs&logoColor=white)
-- ![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white)
-- A valid **Groq API Key** — get one at [console.groq.com](https://console.groq.com)
+> **Prerequisites:** Node.js v18+ · Python 3.10+ · Groq API Key ([get one here](https://console.groq.com))
 
 ---
 
-### 1️⃣ Clone the Repository
+### `Step 1` — Clone
 
 ```bash
 git clone https://github.com/yourusername/SmartReportAI.git
@@ -239,47 +205,52 @@ cd SmartReportAI
 
 ---
 
-### 2️⃣ Backend Setup
+### `Step 2` — Backend
 
 ```bash
-# Navigate to backend
 cd backend
 
-# Create & activate virtual environment
+# Set up virtual environment
 python -m venv venv
-venv\Scripts\activate        # Windows
-# source venv/bin/activate   # macOS/Linux
+venv\Scripts\activate          # Windows
+# source venv/bin/activate     # macOS / Linux
 
-# Install dependencies
+# Install Python packages
 pip install -r requirements.txt
 
-# Add your API Key in .env
+# Configure API key
 echo "GROQ_API_KEY=your_key_here" > .env
 
-# Start the backend server
+# Launch server
 uvicorn main:app --reload
 ```
 
-> 🟢 Backend live at: **http://127.0.0.1:8000**
-> 
-> 📚 API Docs at: **http://127.0.0.1:8000/docs**
+<div align="center">
+
+| Service | URL |
+|---|---|
+| 🟢 API Server | `http://127.0.0.1:8000` |
+| 📘 Swagger Docs | `http://127.0.0.1:8000/docs` |
+
+</div>
 
 ---
 
-### 3️⃣ Frontend Setup
+### `Step 3` — Frontend
 
 ```bash
-# Navigate to frontend
 cd frontend
-
-# Install dependencies
 npm install
-
-# Start development server
 npm run dev
 ```
 
-> 🟢 Frontend live at: **http://localhost:5173**
+<div align="center">
+
+| Service | URL |
+|---|---|
+| 🟢 Dev Server | `http://localhost:5173` |
+
+</div>
 
 <br/>
 
@@ -287,35 +258,37 @@ npm run dev
 
 ## 🌐 API Reference
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `POST` | `/generate-report` | Generate a report from prompt/data |
-| `GET`  | `/health` | Check API health status |
-| `POST` | `/summarize` | Summarize raw input text |
+<div align="center">
+
+| Method | Endpoint | Description | Status |
+|:---:|---|---|:---:|
+| `POST` | `/generate-report` | Generate structured report from input | ✅ |
+| `GET` | `/health` | Server health check | ✅ |
+| `POST` | `/summarize` | Summarize raw text content | ✅ |
+
+</div>
 
 <br/>
 
 ---
 
-## 📈 Roadmap & Future Improvements
+## 📈 Roadmap
+
+<div align="center">
 
 ```
-✅ MVP — AI Report Generation via Prompt
-✅ LangChain Context Awareness
-✅ Groq API Integration
-✅ React + Framer Motion UI
-
-🔜 Coming Soon...
-┌─────────────────────────────────────────────────┐
-│  📄  Export Reports as PDF / DOCX               │
-│  📊  Data Visualization Integration             │
-│  🧠  Multi-Agent AI Workflows                   │
-│  🗂️  Report History & Storage                   │
-│  🔐  User Authentication System                 │
-│  🌙  Dark Mode Support                          │
-│  📱  Mobile-Responsive Redesign                 │
-└─────────────────────────────────────────────────┘
+ COMPLETED                          UPCOMING
+─────────────────────────────────────────────────────
+ ✅ AI Report Generation            📄 PDF / DOCX Export
+ ✅ LangChain Context Engine        📊 Data Visualizations
+ ✅ Groq API Integration            🧠 Multi-Agent Workflows
+ ✅ React + Framer Motion UI        🗂️  Report History & Storage
+                                    🔐 User Auth System
+                                    🌙 Dark Mode
+                                    📱 Mobile Redesign
 ```
+
+</div>
 
 <br/>
 
@@ -323,34 +296,35 @@ npm run dev
 
 ## 🤝 Contributing
 
-Contributions are always welcome! Here's how to get started:
+```bash
+# The contribution loop
+git fork → git branch → git commit → git push → open PR 🎉
+```
 
-1. **Fork** the repository
-2. **Create** your feature branch: `git checkout -b feature/AmazingFeature`
-3. **Commit** your changes: `git commit -m 'Add some AmazingFeature'`
-4. **Push** to the branch: `git push origin feature/AmazingFeature`
-5. **Open** a Pull Request 🎉
-
-Please read our [Contributing Guidelines](CONTRIBUTING.md) before submitting.
-
-<br/>
-
----
-
-## 📄 License
-
-This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+1. **Fork** this repo
+2. **Branch** off: `git checkout -b feature/your-feature`
+3. **Commit** it: `git commit -m "feat: describe your change"`
+4. **Push** it: `git push origin feature/your-feature`
+5. **PR** it — we'll review promptly!
 
 <br/>
 
 ---
 
-## 🙏 Acknowledgements
+## 📄 License & Acknowledgements
 
-- [Groq](https://groq.com/) — for blazing-fast LLM inference
-- [LangChain](https://langchain.com/) — for powerful LLM orchestration
-- [FastAPI](https://fastapi.tiangolo.com/) — for the elegant Python backend
-- [Framer Motion](https://www.framer.com/motion/) — for smooth, beautiful animations
+Licensed under **MIT** — see [`LICENSE`](LICENSE) for details.
+
+<div align="center">
+
+| Built on the shoulders of giants |
+|---|
+| [Groq](https://groq.com) — for near-instant LLM inference |
+| [LangChain](https://langchain.com) — for intelligent context chaining |
+| [FastAPI](https://fastapi.tiangolo.com) — for the sleek Python backend |
+| [Framer Motion](https://framer.com/motion) — for buttery-smooth UI animations |
+
+</div>
 
 <br/>
 
@@ -358,13 +332,20 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 
 <div align="center">
 
-<!-- Footer Wave -->
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:8b5cf6,100:6366f1&height=120&section=footer" width="100%"/>
+<!-- Colorful stats cards -->
+<img src="https://github-readme-stats.vercel.app/api/pin/?username=yourusername&repo=SmartReportAI&theme=tokyonight&border_color=7c3aed&bg_color=0d1117&title_color=a78bfa&icon_color=7c3aed" />
 
-**Built with ❤️ by the SmartReport AI Team**
+<br/><br/>
 
-⭐ Star this repo if you find it helpful!
+<!-- Egg/drum-style footer - completely different from wave/slice -->
+<img src="https://capsule-render.vercel.app/api?type=egg&color=0:24243e,100:302b63&height=120&section=footer&reversal=false&animation=twinkling" width="60%"/>
 
-[![GitHub Profile](https://img.shields.io/badge/Follow%20on%20GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/yourusername)
+<br/>
+
+**SmartReport AI — Because your time is worth more than formatting.**
+
+[![Follow](https://img.shields.io/badge/Follow%20on%20GitHub-0d1117?style=for-the-badge&logo=github&logoColor=a78bfa)](https://github.com/yourusername)
+&nbsp;
+[![Star](https://img.shields.io/badge/⭐%20Star%20this%20repo-302b63?style=for-the-badge)](https://github.com/yourusername/SmartReportAI)
 
 </div>
